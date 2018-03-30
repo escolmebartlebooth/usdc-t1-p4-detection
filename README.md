@@ -3,11 +3,11 @@
 Author: David Escolme
 Date: March 2018
 
-##Pre-requisites
+## Pre-requisites
 
 This repository is built on Python v3 using the repository that can be found at: https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md
 
-##Goals
+## Goals
 
 The goals / steps of this project were the following:
 
@@ -22,16 +22,16 @@ The goals / steps of this project were the following:
 
 [//]: # (Image References)
 
-[image1]: output_images/camera_calibration.png "Calibration"
-[image2]: output_images/distortion_correction.png "Distortion Correction"
-[image3]: output_images/sobel_abs.png "Thresholds"
-[image4]: output_images/sobel_magdir.png "Thresholds"
-[image5]: output_images/color_select.png "Thresholds"
-[image6]: output_images/combined_select.png "Thresholds"
-[image7]: output_images/warped_histogram.png "Warp Example"
-[image8]: output_images/poly_line.png "Fit Visual"
-[image9]: output_images/static_output.png "Output"
-[video1]: project_video_output.mp4 "Video"
+[image1]: ./output_images/camera_calibration.png "Calibration"
+[image2]: ./output_images/distortion_correction.png "Distortion Correction"
+[image3]: ./output_images/sobel_abs.png "Thresholds"
+[image4]: ./output_images/sobel_magdir.png "Thresholds"
+[image5]: ./output_images/color_select.png "Thresholds"
+[image6]: ./output_images/combined_select.png "Thresholds"
+[image7]: ./output_images/warped_histogram.png "Warp Example"
+[image8]: ./output_images/poly_line.png "Fit Visual"
+[image9]: ./output_images/static_output.png "Output"
+[video1]: ./project_video_output.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
 
@@ -163,7 +163,7 @@ The result of the sliding window can be seen below:
 In the same cell as the line seeking function, 2 other functions are defined:
 
 + calculate_radius - this takes left and right lane pixels and fits a real world unit line to each using fixed conversion parameters of 30/720 m/pixel in the y direction and 3.7/700 m/pixel in the x direction
-+ calculate_offset - this calculates the car's positional offset in metres from the center of the lane
++ calculate_offset - this calculates the car's positional offset in metres from the center of the lane by assuming that the image center is the center of the lane and then seeing how far away in pixels the detected lane center is (between the left and right lane pixels) and then using a fixed conversion of 3.7m per pixel to return the offset in metres.
 
 The outputs from these calculations are then made available to add to the output image as text annotations.
 
@@ -187,4 +187,12 @@ Here's a [link to my video result](project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
+The pipeline I have created works reasonably well on clean roads in good daylight with no or little shadow with limited other traffic and clear road markings with good weather. The averaging functions over 5 frames offered a smooth detected lane.
+
+The 2 challenge videos were another matter. The first video has road conditions with shadows caused by bridges and 'false lines' where tarmac from road repairs give the appearance of other lines within the perspective transform. Also, the road bends were tighter. The harder video was filmed on a descending road-surface with much tighter bends.
+
+The pipeline performed quite poorly on both challenge videos and to make the pipeline more robust the following areas would need to be investigated:
+
++ line detection: The pipeline struggles with shadows, dirty or repaird road and/or poor or bright lighting. On the challenge video, the line detection suffers when 'pseudo lines' appear in the transformation window. It seems likely that a better thresholding technique would be needed to safely detect actual lane lines and/or potentially applying or combining machine learning to the resulting image to predict the probability of whether each detected line segment is or is not part of a lane line.
++ transform shape: The pipeline did not account for ascending / descending roads and tight bends. In the case of the harder video, it's likely that the transformation shape top edge is often capturing far too much roadside / tree / sky compared to when the road is flatter and straighter. So as the road descends and turns, the image transformations pick up too many edge detections from off the road surface and do not pick up on the tight bends. Some method of adjusting the transformation shape would be needed to make this more robust
+
