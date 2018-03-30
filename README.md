@@ -1,5 +1,14 @@
 **Advanced Lane Finding Project**
 
+Author: David Escolme
+Date: March 2018
+
+##Pre-requisites
+
+This repository is built on Python v3 using the repository that can be found at: https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md
+
+##Goals
+
 The goals / steps of this project were the following:
 
 * Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
@@ -13,23 +22,22 @@ The goals / steps of this project were the following:
 
 [//]: # (Image References)
 
-[image1]: ./output_images/camera_calibration.png "Calibration"
-[image2]: ./output_images/distortion_correction.png "Distortion Correction"
-[image3]: ./output_images/sobel_abs.png "Thresholds"
-[image4]: ./output_images/sobel_magdir.png "Thresholds"
-[image5]: ./output_images/color_select.png "Thresholds"
-[image6]: ./output_images/combined_select.png "Thresholds"
-[image7]: ./examples/warped_histogram.png "Warp Example"
-
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
-[video1]: ./project_video.mp4 "Video"
+[image1]: output_images/camera_calibration.png "Calibration"
+[image2]: output_images/distortion_correction.png "Distortion Correction"
+[image3]: output_images/sobel_abs.png "Thresholds"
+[image4]: output_images/sobel_magdir.png "Thresholds"
+[image5]: output_images/color_select.png "Thresholds"
+[image6]: output_images/combined_select.png "Thresholds"
+[image7]: output_images/warped_histogram.png "Warp Example"
+[image8]: output_images/poly_line.png "Fit Visual"
+[image9]: output_images/static_output.png "Output"
+[video1]: project_video_output.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
 
 ### Section 1: Camera Calibration
 
-The code for this step is contained in the first section the IPython notebook located in "usdc-advanced-lane-detection-final.iypnb".
+The code for this step is contained in the 3rd code cell of the IPython notebook located in "usdc-advanced-lane-detection-final.iypnb".
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.
 
@@ -39,7 +47,7 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 ### Pipeline (single images)
 
-The pipeline is a series of functions for undistorting, threshholding and transforming images so that lines can be detected. The code for each section are:
+The pipeline is a series of functions for undistorting, threshholding and transforming images so that lane lines can be detected. The code for each section are:
 + calibration - cell #3
 + undistortion - cell #4
 + sobel absolute threshold - cell #6
@@ -54,6 +62,7 @@ after this point, various test processing is done on all of the test image files
 #### 1. Provide an example of a distortion-corrected image.
 
 Distortion correction takes calibration coefficients generated from the calibration function and applies them to the original image using open cv undistort function as shown below:
+
 ![alt text][image2]
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
@@ -89,7 +98,14 @@ The combination of sobel_abs in the x direction with a threshold of (20,100) and
 
 The approach to finding lanes and then fitting a line to the detected lanes is achieved by transforming the threshold image so that we get a bird's eye view of the road surface - zoomed onto the lane.
 
-This is in cell #11. I chose to hard code the source and destination points. Using opencv functions it is possible to transform in both directions so that when lines are detected that can be played back into the original image.
+Using the functions:
+
+M = cv2.getPerspectiveTransform(src, dst)
+Minv = cv2.getPerspectiveTransform(dst, src) (for the inverse transformation)
+
+and applying the result to return cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_LINEAR), resulted in the transformed image
+
+This is in cell #11. I chose to hard code the source and destination points:
 
 ```python
     img_size = (img.shape[1], img.shape[0])
@@ -128,17 +144,32 @@ From the image below, the lines can be seen to be parallel in the transformed im
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
-...
+In cell 22, i defined a function to seek lanes. This performs a sliding window search on a binary image using the following steps:
+
++ find the left and right x positions of the largest histogram values of the binary image on each half of the image
++ starting at the left and right bases step through 9 iterations (windows):
+    + create window boundaries using margin and height variables
+    + find nonzero pixels in the windows (left and right)
+    + add the pixels to lane indicies matrices for left and right
+    + if enough pixels have been found, take the mean to update the current x position for the next window
++ with the results of the window search, left and right polynomials can be fitted to the pixel indicies matrices using ```np.polyfit```
+
+The result of the sliding window can be seen below:
 
 ![alt text][image8]
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-...
+In the same cell as the line seeking function, 2 other functions are defined:
+
++ calculate_radius - this takes left and right lane pixels and fits a real world unit line to each using fixed conversion parameters of 30/720 m/pixel in the y direction and 3.7/700 m/pixel in the x direction
++ calculate_offset - this calculates the car's positional offset in metres from the center of the lane
+
+The outputs from these calculations are then made available to add to the output image as text annotations.
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-...
+The output from running the pipeline against 1 of the test images can seen below showing the original image, the perspective thresholded transform, the histogram and the detected lane lines overlaid onto the original image with the radius and offset as annotations.
 
 ![alt text][image9]
 
@@ -148,7 +179,7 @@ From the image below, the lines can be seen to be parallel in the transformed im
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](project_video.mp4)
 
 ---
 
