@@ -29,7 +29,7 @@ The goals / steps of this project were the following:
 [image5]: ./output_images/color_select.PNG "Thresholds"
 [image6]: ./output_images/combined_select.PNG "Thresholds"
 [image7]: ./output_images/warped_histogram.PNG "Warp Example"
-[image8]: ./output_images/poly_line.PNG "Fit Visual"
+[image8]: ./output_images/polyline.PNG "Fit Visual"
 [image9]: ./output_images/static_output.PNG "Output"
 [video1]: ./project_video_output.mp4 "Video"
 
