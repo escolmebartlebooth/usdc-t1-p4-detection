@@ -22,15 +22,15 @@ The goals / steps of this project were the following:
 
 [//]: # (Image References)
 
-[image1]: ./output_images/camera_calibration.png "Calibration"
-[image2]: ./output_images/distortion_correction.png "Distortion Correction"
-[image3]: ./output_images/sobel_abs.png "Thresholds"
-[image4]: ./output_images/sobel_magdir.png "Thresholds"
-[image5]: ./output_images/color_select.png "Thresholds"
-[image6]: ./output_images/combined_select.png "Thresholds"
-[image7]: ./output_images/warped_histogram.png "Warp Example"
-[image8]: ./output_images/poly_line.png "Fit Visual"
-[image9]: ./output_images/static_output.png "Output"
+[image1]: ./output_images/undistort_output.png "Calibration"
+[image2]: ./output_images/distortion_correction.PNG "Distortion Correction"
+[image3]: ./output_images/sobel_abs.PNG "Thresholds"
+[image4]: ./output_images/sobel_magdir.PNG "Thresholds"
+[image5]: ./output_images/color_select.PNG "Thresholds"
+[image6]: ./output_images/combined_select.PNG "Thresholds"
+[image7]: ./output_images/warped_histogram.PNG "Warp Example"
+[image8]: ./output_images/poly_line.PNG "Fit Visual"
+[image9]: ./output_images/static_output.PNG "Output"
 [video1]: ./project_video_output.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
