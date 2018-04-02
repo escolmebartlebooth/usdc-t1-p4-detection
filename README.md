@@ -3,6 +3,8 @@
 Author: David Escolme
 Date: March 2018
 
+Updated: April 2 2018: Changed averaging and sanity checks
+
 ## Pre-requisites
 
 This repository is built on Python v3 using the repository that can be found at: https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md
